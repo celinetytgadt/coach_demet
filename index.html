@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>De MET — Opvolging</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blauw:#000791; --rood:#ff4435; --groen:#00d183;
+  --lila:#8f83dd; --mos:#007a6e; --aqua:#17BEBB; --bever:#82715E;
+  --oranje:#ff9900;
+  --bg:#f4f5fb; --line:#e3e4f0; --tekst:#000791; --grijs:#7b7f99;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Open Sans',sans-serif;background:var(--bg);color:#1a1c2e;font-size:15px}
+header{background:var(--blauw);color:#fff;padding:.85rem 1.5rem;display:flex;align-items:center;gap:.9rem;box-shadow:0 2px 10px rgba(0,7,145,.25)}
+.logo{background:#fff;color:var(--blauw);font-weight:700;border-radius:7px;padding:.25rem .6rem;font-size:.95rem;letter-spacing:.02em}
+header h1{font-size:1.05rem;font-weight:600}
+header .v{font-size:.7rem;opacity:.55;font-weight:400}
+nav{background:#fff;border-bottom:1px solid var(--line);padding:0 1.5rem;display:flex;flex-wrap:wrap}
+nav button{padding:.8rem 1.1rem;border:none;background:none;cursor:pointer;font-size:.9rem;color:var(--grijs);border-bottom:3px solid transparent;font-family:inherit}
+nav button.active{color:var(--blauw);border-bottom-color:var(--groen);font-weight:600}
+main{padding:1.5rem;max-width:1100px;margin:0 auto}
+.section{display:none}.section.active{display:block}
+.card{background:#fff;border-radius:12px;border:1px solid var(--line);padding:1.25rem;margin-bottom:1rem}
+h2{font-size:1rem;font-weight:600;color:var(--blauw);margin:1.25rem 0 .65rem}
+h2:first-child{margin-top:0}
+h3.sub{font-size:.9rem;font-weight:700;color:var(--blauw);margin:.9rem 0 .45rem}
+.row{display:flex;gap:.75rem;align-items:center;flex-wrap:wrap}
+label.lbl{font-size:.82rem;color:var(--grijs);font-weight:600}
+select,input[type=date],input[type=text],textarea{padding:.45rem .65rem;border:1px solid #cdd0e2;border-radius:8px;font-size:.9rem;font-family:inherit;background:#fff;color:#1a1c2e}
+select:focus,input:focus,textarea:focus{outline:none;border-color:var(--blauw);box-shadow:0 0 0 3px rgba(0,7,145,.1)}
+.btn{padding:.45rem 1rem;border-radius:8px;border:1px solid var(--blauw);background:var(--blauw);color:#fff;cursor:pointer;font-size:.9rem;font-family:inherit;font-weight:600}
+.btn:hover{filter:brightness(1.15)}
+.btn.outline{background:#fff;color:var(--blauw)}
+.btn.danger{background:#fff;border-color:var(--rood);color:var(--rood)}
+.btn.sm{padding:.35rem .8rem;font-size:.84rem}
+.btn.xs{padding:.22rem .55rem;font-size:.8rem;font-weight:600}
+.btn:disabled{opacity:.5;cursor:default}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th{text-align:left;padding:.55rem .75rem;background:#f0f1fa;color:var(--blauw);font-weight:600;font-size:.8rem;border-bottom:1px solid var(--line)}
+td{padding:.5rem .75rem;border-bottom:1px solid #f0f1fa;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+.leeg{text-align:center;color:#b6b9cf;padding:2rem 1rem;font-size:.9rem}
+.badge{display:inline-block;border-radius:11px;padding:2px 9px;font-size:.78rem;font-weight:600}
+.b-groen{background:#d6f7ec;color:var(--mos)} .b-rood{background:#ffe2df;color:#c22} .b-grijs{background:#eceef6;color:var(--grijs)}
+.b-lila{background:#eae7fa;color:#5b4bc0} .b-aqua{background:#d4f4f3;color:#0d8a87} .b-oranje{background:#ffefd6;color:#b06c00}
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:.75rem;margin-bottom:1rem}
+.stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:.7rem .9rem;text-align:center}
+.stat-label{font-size:.72rem;color:var(--grijs);font-weight:600;text-transform:uppercase;letter-spacing:.03em}
+.stat-value{font-size:1.35rem;font-weight:700;color:var(--blauw)}
+.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(10,12,40,.45);z-index:200;align-items:center;justify-content:center;padding:1rem}
+.modal-backdrop.open{display:flex}
+.modal{background:#fff;border-radius:14px;padding:1.4rem;width:100%;max-width:520px;max-height:88vh;overflow-y:auto}
+.modal h3{font-size:1.05rem;font-weight:700;margin-bottom:1rem;color:var(--blauw)}
+.modal-footer{display:flex;gap:.5rem;justify-content:flex-end;margin-top:1.1rem;padding-top:1rem;border-top:1px solid var(--line)}
+.fg{margin-bottom:.85rem}.fg label{display:block;font-size:.82rem;color:#555;font-weight:600;margin-bottom:4px}
+.fg input,.fg textarea{width:100%}
+.check-lijst label{display:flex;align-items:center;gap:.5rem;padding:.4rem;cursor:pointer;font-size:.88rem;border-bottom:1px solid #f3f4fa}
+.check-lijst label:last-child{border-bottom:none}
+.list-item{display:flex;align-items:center;gap:.7rem;padding:.6rem 0;border-bottom:1px solid #f0f1fa}
+.list-item:last-child{border-bottom:none}
+.toast{position:fixed;bottom:1.25rem;right:1.25rem;z-index:300;background:var(--blauw);color:#fff;padding:.7rem 1.1rem;border-radius:10px;font-size:.85rem;box-shadow:0 6px 20px rgba(0,7,60,.3);opacity:0;transform:translateY(10px);transition:.25s}
+.toast.show{opacity:1;transform:translateY(0)}
+a{color:var(--blauw)}
+/* kleurstatusknoppen (expertweergave) */
+.kleur-btn{width:34px;height:34px;border-radius:50%;border:2px solid #d8dae8;background:#fff;cursor:pointer;font-size:0;margin-right:4px;transition:.15s}
+.kleur-btn:hover{transform:scale(1.12)}
+.kleur-btn.groen{background:#57bb8a;border-color:#57bb8a;opacity:.25}
+.kleur-btn.oranje{background:#ff9900;border-color:#ff9900;opacity:.25}
+.kleur-btn.rood{background:#ff4435;border-color:#ff4435;opacity:.25}
+.kleur-btn.actief{opacity:1;box-shadow:0 0 0 3px rgba(0,7,145,.18)}
+/* chips (coachweergave) */
+.chip{display:inline-flex;align-items:center;gap:6px;border-radius:14px;padding:3px 11px;font-size:.83rem;font-weight:600;margin:2px 4px 2px 0;border:1px solid var(--line);background:#f7f8fc}
+.chip .bol{width:12px;height:12px;border-radius:50%;display:inline-block}
+.chip.oud{opacity:.45}
+.bol.groen{background:#57bb8a}.bol.oranje{background:#ff9900}.bol.rood{background:#ff4435}.bol.geen{background:#d8dae8}
+.vak-blok{border:1px solid var(--line);border-radius:10px;padding:.7rem .9rem;margin-bottom:.6rem;background:#fbfbfe}
+.vak-blok .notitie{font-size:.83rem;color:#555;margin-top:.35rem;padding-left:.2rem;border-left:3px solid #e3e4f0}
+.cr-blok{border:1px solid var(--line);border-radius:10px;padding:.75rem .95rem;margin-bottom:.6rem}
+.cr-cat{font-size:.85rem;margin:.25rem 0;cursor:pointer}
+.cr-cat .taken{display:none;font-size:.8rem;color:#666;padding:.25rem 0 .25rem 1.5rem}
+.cr-cat.open .taken{display:block}
+.spark{vertical-align:middle}
+details.uitleg{font-size:.83rem;color:#666;margin-top:.6rem}
+details.uitleg summary{cursor:pointer;color:var(--grijs);font-weight:600;font-size:.8rem}
+.notitie-input{border:none;background:transparent;font-size:.85rem;color:#555;width:100%;border-bottom:1px dashed #d8dae8;border-radius:0;padding:.25rem .1rem}
+.notitie-input:focus{box-shadow:none;border-bottom:1px solid var(--blauw)}
+</style>
+</head>
+<body>
+
+<header>
+  <span class="logo">De MET</span>
+  <h1>Opvolging <span class="v">v0.1</span></h1>
+  <span id="hdr-status" style="margin-left:auto;font-size:.78rem;opacity:.75"></span>
+</header>
+
+<nav>
+  <button class="active" data-tab="coach" onclick="showTab('coach',this)">🧭 Coach</button>
+  <button data-tab="expert" onclick="showTab('expert',this)">🎓 Expert</button>
+  <button data-tab="instellingen" onclick="showTab('instellingen',this)">⚙ Instellingen</button>
+</nav>
+
+<main>
+
+<!-- ── COACH ─────────────────────────────────────────────────────────────── -->
+<div id="tab-coach" class="section active">
+  <div class="card">
+    <div class="row">
+      <label class="lbl">Coachgroep</label><select id="coach-groep" onchange="wisselCoachgroep()"></select>
+      <label class="lbl">Leerling</label><select id="coach-lln" onchange="toonLeerling()"></select>
+      <button class="btn sm" id="btn-vernieuw" onclick="vernieuwClassroom()">🔄 Vernieuwen</button>
+      <span id="coach-sync" style="font-size:.8rem;color:var(--grijs)"></span>
+    </div>
+    <div style="font-size:.78rem;color:#b6b9cf;margin-top:.5rem">Vernieuw minstens één keer per week: elke vernieuwing bewaart een momentopname voor de trend. Er wordt maar één leerling tegelijk getoond.</div>
+  </div>
+  <div id="coach-detail"><div class="leeg">Kies een leerling om de opvolging te bekijken.</div></div>
+</div>
+
+<!-- ── EXPERT ────────────────────────────────────────────────────────────── -->
+<div id="tab-expert" class="section">
+  <div class="card">
+    <div class="row">
+      <label class="lbl">Expertise</label><select id="exp-vak"></select>
+      <label class="lbl">Classroom</label><select id="exp-klas"></select>
+      <button class="btn sm" onclick="laadExpertLijst()">Laden</button>
+      <span id="exp-sync" style="font-size:.8rem;color:var(--grijs)"></span>
+    </div>
+    <div style="font-size:.78rem;color:#b6b9cf;margin-top:.5rem">🟢 geen zorgen · 🟠 een beetje zorgen · 🔴 grote zorgen (ouders contacteren — notitie verplicht). Elke klik wordt bewaard met datum, zichtbaar voor de coaches.</div>
+  </div>
+  <div id="exp-container"><div class="leeg">Kies een expertise en classroom → klik <strong>Laden</strong></div></div>
+</div>
+
+<!-- ── INSTELLINGEN ──────────────────────────────────────────────────────── -->
+<div id="tab-instellingen" class="section">
+
+  <div class="card">
+    <h2>Google-account</h2>
+    <div id="google-uit">
+      <p style="font-size:.88rem;color:#666;margin-bottom:.7rem">Meld aan met je schoolaccount. De app leest Classroom (alleen-lezen) en bewaart de opvolgingsgegevens in een gedeelde Drive-map.</p>
+      <button class="btn" onclick="koppelGoogle()">Aanmelden met Google</button>
+    </div>
+    <div id="google-aan" style="display:none">
+      <p id="google-naam" style="font-size:.9rem;color:var(--mos);font-weight:600;margin-bottom:.7rem"></p>
+      <button class="btn outline sm" onclick="ontkoppelGoogle()">Afmelden</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Gedeelde map</h2>
+    <p style="font-size:.85rem;color:#666;margin-bottom:.7rem">Alle opvolgingsbestanden staan in één gedeelde Drive-map van het team. Plak de link (of het ID) van die map, of maak er een aan als die nog niet bestaat.</p>
+    <div class="row">
+      <input type="text" id="map-input" placeholder="https://drive.google.com/drive/folders/…" style="min-width:320px;flex:1">
+      <button class="btn sm" onclick="koppelMap()">Koppelen</button>
+      <button class="btn sm outline" onclick="maakMap()">Nieuwe map aanmaken</button>
+    </div>
+    <p id="map-status" style="font-size:.84rem;margin-top:.6rem;color:var(--grijs)"></p>
+  </div>
+
+  <div class="card">
+    <h2>Mijn classrooms</h2>
+    <p style="font-size:.85rem;color:#666;margin-bottom:.7rem">Kies welke classrooms deze app mag inladen (voor de coachweergave én de expertweergave). Alleen aangevinkte classrooms worden opgehaald.</p>
+    <div class="row" style="margin-bottom:.6rem">
+      <button class="btn sm outline" onclick="laadClassroomLijst()">🔄 Classrooms ophalen</button>
+      <label style="font-size:.85rem;display:flex;align-items:center;gap:.4rem"><input type="checkbox" id="incl-archief" onchange="laadClassroomLijst()"> ook gearchiveerde tonen</label>
+    </div>
+    <div id="klassen-lijst" class="check-lijst" style="max-height:300px;overflow-y:auto;border:1px solid var(--line);border-radius:8px;padding:.4rem"><p style="font-size:.85rem;color:#b6b9cf;padding:.4rem">Nog niets opgehaald.</p></div>
+  </div>
+
+  <div class="card">
+    <h2>Leerlingenlijst (centraal)</h2>
+    <p style="font-size:.85rem;color:#666;margin-bottom:.7rem">Het bestand <code>leerlingen.json</code> in de gedeelde map koppelt elke leerling aan een coach. Eén beheerder houdt dit bij. Formaat per regel: <code>naam;e-mail;jaar;coach</code></p>
+    <p id="lln-status" style="font-size:.84rem;color:var(--grijs);margin-bottom:.5rem"></p>
+    <details>
+      <summary style="cursor:pointer;font-size:.85rem;color:var(--blauw);font-weight:600">Lijst bewerken (alleen voor de beheerder)</summary>
+      <textarea id="lln-editor" rows="8" style="width:100%;margin-top:.6rem;font-family:monospace;font-size:.82rem" placeholder="Flore Peeters;flore@demet.be;5;Gert-Jan&#10;Daan Willems;daan@demet.be;5;Gert-Jan"></textarea>
+      <div class="row" style="margin-top:.5rem">
+        <button class="btn sm" onclick="bewaarLeerlingen()">Opslaan naar gedeelde map</button>
+      </div>
+    </details>
+  </div>
+
+  <div class="card">
+    <h2>Gegevens</h2>
+    <div class="row">
+      <button class="btn sm outline" onclick="herlaadDrive()">☁ Alles opnieuw laden uit Drive</button>
+      <button class="btn sm danger" onclick="resetAlles()">Lokale instellingen wissen</button>
+    </div>
+    <p style="font-size:.78rem;color:#b6b9cf;margin-top:.6rem">Wissen verwijdert alleen jouw lokale instellingen (mapkoppeling, klaskeuze). De gedeelde bestanden in Drive blijven staan.</p>
+  </div>
+
+</div>
+
+</main>
+
+<!-- MODAL: rood = notitie verplicht -->
+<div class="modal-backdrop" id="modal-rood"><div class="modal">
+  <h3>🔴 Grote zorgen — notitie verplicht</h3>
+  <p style="font-size:.85rem;color:#666;margin-bottom:.8rem">Bij rood moeten de ouders gecontacteerd worden (door de coach). Beschrijf kort waarover je je zorgen maakt, zodat de coach dat gesprek kan voeren.</p>
+  <div class="fg"><label id="rood-wie"></label><textarea id="rood-notitie" rows="4" placeholder="bv. Al 3 weken geen taken ingeleverd, haakt af tijdens de les…"></textarea></div>
+  <div class="modal-footer">
+    <button class="btn sm outline" onclick="sluit('modal-rood')">Annuleren</button>
+    <button class="btn sm" onclick="bevestigRood()">Rood instellen</button>
+  </div>
+</div></div>
+
+<!-- MODAL: focusgesprek -->
+<div class="modal-backdrop" id="modal-focus"><div class="modal">
+  <h3>🎯 Focusgesprek registreren</h3>
+  <div class="fg"><label id="focus-wie"></label></div>
+  <div class="fg"><label>Datum</label><input type="date" id="focus-datum"></div>
+  <div class="fg"><label>Wat is er besproken?</label><textarea id="focus-notitie" rows="4" placeholder="bv. Trui haken — mouwen bezig, volgende stap: hals. Hulp gezocht bij oma."></textarea></div>
+  <div class="modal-footer">
+    <button class="btn sm outline" onclick="sluit('modal-focus')">Annuleren</button>
+    <button class="btn sm" onclick="bevestigFocus()">Opslaan</button>
+  </div>
+</div></div>
+
+<!-- MODAL: oudercontact -->
+<div class="modal-backdrop" id="modal-contact"><div class="modal">
+  <h3>📞 Oudercontact registreren</h3>
+  <div class="fg"><label id="contact-wie"></label></div>
+  <div class="fg"><label>Datum</label><input type="date" id="contact-datum"></div>
+  <div class="fg"><label>Korte notitie (optioneel)</label><textarea id="contact-notitie" rows="3" placeholder="bv. Mama gebeld i.v.m. rood voor Frans, afspraken gemaakt over planning."></textarea></div>
+  <div class="modal-footer">
+    <button class="btn sm outline" onclick="sluit('modal-contact')">Annuleren</button>
+    <button class="btn sm" onclick="bevestigContact()">Opslaan</button>
+  </div>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── BASIS ─────────────────────────────────────────────────────────────────────
+const KEY='opv_v1';
+const EXPERTISES=['biologie','economie','Engels','filosofie','Frans','menswetenschappen','Nederlands','sport'];
+const VERS_DAGEN=21; // expertstatus ouder dan dit → vervaagd
+const LEEG_CFG={folderId:null,klassen:[],gekozen:{},coachGroep:''};
+let cfg=laadCfg();
+function laadCfg(){try{const d=JSON.parse(localStorage.getItem(KEY));return d?{...LEEG_CFG,...d}:{...LEEG_CFG};}catch(e){return {...LEEG_CFG};}}
+function saveCfg(){localStorage.setItem(KEY,JSON.stringify(cfg));}
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+const escJs=s=>String(s??'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+const vandaag=()=>new Date().toISOString().split('T')[0];
+const toonDatum=d=>{if(!d)return'';const[j,m,dag]=d.split('-');return `${dag}/${m}/${j.slice(2)}`;};
+const dagenGeleden=d=>Math.floor((Date.now()-new Date(d+'T12:00:00').getTime())/86400000);
+function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2400);}
+function sluit(id){$(id).classList.remove('open');}
+document.querySelectorAll('.modal-backdrop').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');}));
+
+// gedeelde data (uit de Drive-map)
+let leerlingen=[];            // [{naam,email,jaar,coach}]
+let expertBestanden={};       // bestandsnaam → data (alle expert_*.json)
+let coachBestanden={};        // bestandsnaam → data (alle coach_*.json)
+let bestandIds={};            // bestandsnaam → Drive-fileId
+let mijnExpert=null, mijnCoach=null; // verwijzen naar eigen objecten in de maps
+let classroomCache=null;      // {tijd, perLln:{email:{courses:[...]}}}
+
+// ── TABS ──────────────────────────────────────────────────────────────────────
+const TAB_INIT={coach:initCoachTab,expert:initExpertTab,instellingen:laadInstellingen};
+function showTab(naam,btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+  $('tab-'+naam).classList.add('active');btn?.classList.add('active');
+  TAB_INIT[naam]?.();
+}
+
+// ── GOOGLE AUTH (zelfde patroon als klasbeheer) ───────────────────────────────
+const GKEY='732025887189-rml3flr631f1gmhhlkb63nbgqekqotsi.apps.googleusercontent.com';
+// bredere Drive-scope dan klasbeheer: we moeten bestanden van collega's in de gedeelde map kunnen lezen
+const GSCOPE='https://www.googleapis.com/auth/classroom.courses.readonly https://www.googleapis.com/auth/classroom.rosters.readonly https://www.googleapis.com/auth/classroom.coursework.students.readonly https://www.googleapis.com/auth/classroom.student-submissions.students.readonly https://www.googleapis.com/auth/drive';
+let googleToken=null, mijnEmail=null, mijnNaam=null, googleBezig=false;
+let tokenClient=null, naToken=null;
+
+function laadGScript(cb){
+  if(window.google?.accounts){cb();return;}
+  const s=document.createElement('script');s.src='https://accounts.google.com/gsi/client';s.onload=cb;document.head.appendChild(s);
+}
+function tokenKlaar(r){
+  googleBezig=false;const actie=naToken;naToken=null;
+  if(r.error){if(r.error!=='popup_closed_by_user')console.warn('token:',r.error);if(actie)actie(false);return;}
+  googleToken=r.access_token;if(actie)actie(true);
+}
+function zorgClient(cb){
+  laadGScript(()=>{
+    if(!tokenClient)tokenClient=google.accounts.oauth2.initTokenClient({client_id:GKEY,scope:GSCOPE,callback:tokenKlaar});
+    cb();
+  });
+}
+function koppelGoogle(){
+  if(googleBezig)return;googleBezig=true;
+  zorgClient(()=>{naToken=ok=>{if(ok)naLogin();};tokenClient.requestAccessToken();});
+}
+function vernieuwToken(daarna){
+  if(!tokenClient){daarna(false);return;}
+  naToken=daarna;
+  try{tokenClient.requestAccessToken({prompt:''});}catch(e){naToken=null;daarna(false);}
+}
+async function naLogin(){
+  try{
+    const info=await gFetch('https://classroom.googleapis.com/v1/userProfiles/me');
+    mijnEmail=(info.emailAddress||'').toLowerCase();
+    mijnNaam=info.name?.fullName||mijnEmail;
+    localStorage.setItem('opv_google','1');
+    localStorage.setItem('opv_google_naam',mijnNaam);
+    localStorage.setItem('opv_google_email',mijnEmail);
+    zetVerbUI(true);
+    if(cfg.folderId)await laadAlles();
+  }catch(e){alert('Aanmelden mislukt: '+e.message);googleToken=null;}
+}
+function zetVerbUI(v){
+  $('google-uit').style.display=v?'none':'block';
+  $('google-aan').style.display=v?'block':'none';
+  if(v)$('google-naam').textContent='✓ Verbonden als '+(localStorage.getItem('opv_google_naam')||'?');
+  $('hdr-status').textContent=v?('☁ '+(localStorage.getItem('opv_google_naam')||'')):'';
+}
+function ontkoppelGoogle(){
+  googleToken=null;googleBezig=false;mijnEmail=null;mijnNaam=null;
+  localStorage.removeItem('opv_google');localStorage.removeItem('opv_google_naam');localStorage.removeItem('opv_google_email');
+  zetVerbUI(false);
+}
+function nietVerbonden(){return '<div class="leeg" style="color:var(--rood)">⚠ Niet verbonden met Google.<br><button class="btn sm" style="margin-top:.75rem" onclick="koppelGoogle()">Aanmelden met Google</button></div>';}
+
+// fetch-helpers met automatische tokenvernieuwing bij 401
+async function gFetch(url,opties={}){
+  opties.headers={...(opties.headers||{}),Authorization:'Bearer '+googleToken};
+  let r=await fetch(url,opties);
+  if(r.status===401){
+    const ok=await new Promise(res=>vernieuwToken(res));
+    if(ok){opties.headers.Authorization='Bearer '+googleToken;r=await fetch(url,opties);}
+  }
+  if(!r.ok){
+    let msg=r.status+' '+r.statusText;
+    try{const j=await r.json();if(j.error?.message)msg=r.status+' — '+j.error.message;}catch(e){}
+    throw new Error(msg);
+  }
+  return r.status===204?null:r.json();
+}
+async function gFetchAll(basisUrl,veld,pageSize=50){
+  let items=[],token='';
+  do{
+    const sep=basisUrl.includes('?')?'&':'?';
+    const d=await gFetch(`${basisUrl}${sep}pageSize=${pageSize}&pageToken=${token}`);
+    items=items.concat(d[veld]||[]);
+    token=d.nextPageToken||'';
+  }while(token);
+  return items;
+}
+
+// ── DRIVE: gedeelde map ───────────────────────────────────────────────────────
+const EXPERT_PREFIX='expert_', COACH_PREFIX='coach_', LLN_BESTAND='leerlingen.json';
+const mijnExpertNaam=()=>EXPERT_PREFIX+(mijnEmail||'onbekend').replace(/[^a-z0-9.@_-]/gi,'')+'.json';
+const mijnCoachNaam=()=>COACH_PREFIX+(mijnEmail||'onbekend').replace(/[^a-z0-9.@_-]/gi,'')+'.json';
+
+function parseFolderId(inv){
+  const m=String(inv).match(/folders\/([A-Za-z0-9_-]{10,})/);
+  if(m)return m[1];
+  if(/^[A-Za-z0-9_-]{10,}$/.test(inv.trim()))return inv.trim();
+  return null;
+}
+async function koppelMap(){
+  if(!googleToken){koppelGoogle();return;}
+  const id=parseFolderId($('map-input').value);
+  if(!id){alert('Dat lijkt geen geldige maplink of map-ID.');return;}
+  try{
+    const f=await gFetch(`https://www.googleapis.com/drive/v3/files/${id}?fields=id,name,mimeType&supportsAllDrives=true`);
+    if(f.mimeType!=='application/vnd.google-apps.folder'){alert('Dit is geen map.');return;}
+    cfg.folderId=f.id;saveCfg();
+    $('map-status').textContent='✓ Gekoppeld aan map "'+f.name+'"';
+    await laadAlles();
+  }catch(e){alert('Map niet gevonden of geen toegang: '+e.message);}
+}
+async function maakMap(){
+  if(!googleToken){koppelGoogle();return;}
+  if(!confirm('Nieuwe map "De MET — Opvolging" aanmaken in jouw Drive? Deel de map daarna met het team (bewerker).'))return;
+  try{
+    const f=await gFetch('https://www.googleapis.com/drive/v3/files?fields=id,name',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({name:'De MET — Opvolging',mimeType:'application/vnd.google-apps.folder'})});
+    cfg.folderId=f.id;saveCfg();
+    $('map-status').innerHTML='✓ Map aangemaakt. <a href="https://drive.google.com/drive/folders/'+f.id+'" target="_blank">Open in Drive</a> en deel ze met het team.';
+    await laadAlles();
+  }catch(e){alert('Aanmaken mislukt: '+e.message);}
+}
+async function mapBestanden(){
+  return gFetchAll(`https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(`'${cfg.folderId}' in parents and trashed=false`)}&fields=nextPageToken,files(id,name,modifiedTime)&supportsAllDrives=true&includeItemsFromAllDrives=true`,'files',100);
+}
+async function leesJson(fileId){
+  const r=await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media&supportsAllDrives=true`,{headers:{Authorization:'Bearer '+googleToken}});
+  if(r.status===401){const ok=await new Promise(res=>vernieuwToken(res));if(!ok)throw new Error('sessie verlopen');return leesJson(fileId);}
+  if(!r.ok)throw new Error('lezen '+r.status);
+  return r.json();
+}
+async function schrijfJson(naam,obj){
+  const inhoud=JSON.stringify(obj);
+  if(bestandIds[naam]){
+    await gFetch(`https://www.googleapis.com/upload/drive/v3/files/${bestandIds[naam]}?uploadType=media&supportsAllDrives=true`,
+      {method:'PATCH',headers:{'Content-Type':'application/json'},body:inhoud});
+  }else{
+    const grens='opv'+Date.now();
+    const meta={name:naam,parents:[cfg.folderId]};
+    const body=`--${grens}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify(meta)}\r\n--${grens}\r\nContent-Type: application/json\r\n\r\n${inhoud}\r\n--${grens}--`;
+    const f=await gFetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id&supportsAllDrives=true',
+      {method:'POST',headers:{'Content-Type':`multipart/related; boundary=${grens}`},body});
+    bestandIds[naam]=f.id;
+  }
+}
+// gespreid opslaan van eigen bestanden
+let expertTimer=null, coachTimer=null;
+function bewaarMijnExpert(){clearTimeout(expertTimer);expertTimer=setTimeout(()=>{
+  schrijfJson(mijnExpertNaam(),mijnExpert).then(()=>zetSync('exp-sync',true)).catch(e=>zetSync('exp-sync',false,e.message));},1200);}
+function bewaarMijnCoach(){clearTimeout(coachTimer);coachTimer=setTimeout(()=>{
+  schrijfJson(mijnCoachNaam(),mijnCoach).then(()=>zetSync('coach-sync',true)).catch(e=>zetSync('coach-sync',false,e.message));},1200);}
+function zetSync(id,ok,msg){const el=$(id);if(!el)return;el.textContent=ok?'☁ opgeslagen':'⚠ opslaan mislukt'+(msg?' ('+msg+')':'');el.style.color=ok?'var(--mos)':'var(--rood)';}
+
+// alles uit de gedeelde map laden
+async function laadAlles(){
+  if(!googleToken||!cfg.folderId)return;
+  $('map-status').textContent='⏳ Bestanden laden…';
+  try{
+    const files=await mapBestanden();
+    bestandIds={};expertBestanden={};coachBestanden={};leerlingen=[];
+    files.forEach(f=>bestandIds[f.name]=f.id);
+    const laadTaken=[];
+    for(const f of files){
+      if(f.name===LLN_BESTAND)laadTaken.push(leesJson(f.id).then(d=>{leerlingen=d.leerlingen||[];}).catch(()=>{}));
+      else if(f.name.startsWith(EXPERT_PREFIX)&&f.name.endsWith('.json'))laadTaken.push(leesJson(f.id).then(d=>{expertBestanden[f.name]=d;}).catch(()=>{}));
+      else if(f.name.startsWith(COACH_PREFIX)&&f.name.endsWith('.json'))laadTaken.push(leesJson(f.id).then(d=>{coachBestanden[f.name]=d;}).catch(()=>{}));
+    }
+    await Promise.all(laadTaken);
+    // eigen bestanden klaarzetten (aanmaken in geheugen als ze nog niet bestaan)
+    mijnExpert=expertBestanden[mijnExpertNaam()]||{expert:{naam:mijnNaam,email:mijnEmail},statussen:{},log:[],focus:[]};
+    mijnExpert.expert={naam:mijnNaam,email:mijnEmail};
+    expertBestanden[mijnExpertNaam()]=mijnExpert;
+    mijnCoach=coachBestanden[mijnCoachNaam()]||{coach:{naam:mijnNaam,email:mijnEmail},snapshots:{},oudercontacten:[]};
+    mijnCoach.coach={naam:mijnNaam,email:mijnEmail};
+    coachBestanden[mijnCoachNaam()]=mijnCoach;
+    $('map-status').textContent=`✓ Map gekoppeld · ${leerlingen.length} leerlingen · ${Object.keys(expertBestanden).length} expertbestand(en) · ${Object.keys(coachBestanden).length} coachbestand(en)`;
+    vulLlnStatus();initCoachTab();initExpertTab();
+    toast('Gegevens geladen uit de gedeelde map');
+  }catch(e){$('map-status').textContent='⚠ '+e.message;}
+}
+function herlaadDrive(){if(!googleToken){koppelGoogle();return;}if(!cfg.folderId){alert('Koppel eerst een gedeelde map.');return;}laadAlles();}
+
+// ── LEERLINGENLIJST ───────────────────────────────────────────────────────────
+function vulLlnStatus(){
+  $('lln-status').textContent=leerlingen.length
+    ? `${leerlingen.length} leerlingen geladen · coaches: ${[...new Set(leerlingen.map(l=>l.coach))].join(', ')}`
+    : 'Nog geen leerlingen.json in de gedeelde map.';
+  $('lln-editor').value=leerlingen.map(l=>`${l.naam};${l.email};${l.jaar};${l.coach}`).join('\n');
+}
+async function bewaarLeerlingen(){
+  if(!googleToken||!cfg.folderId){alert('Meld eerst aan en koppel de gedeelde map.');return;}
+  const regels=$('lln-editor').value.split('\n').map(r=>r.trim()).filter(Boolean);
+  const nieuw=[];const fouten=[];
+  regels.forEach((r,i)=>{
+    const d=r.split(';').map(x=>x.trim());
+    if(d.length<4||!d[1].includes('@')){fouten.push(i+1);return;}
+    nieuw.push({naam:d[0],email:d[1].toLowerCase(),jaar:d[2],coach:d[3]});
+  });
+  if(fouten.length){alert('Regel(s) '+fouten.join(', ')+' kloppen niet. Formaat: naam;e-mail;jaar;coach');return;}
+  if(!confirm(`leerlingen.json overschrijven met ${nieuw.length} leerlingen?`))return;
+  try{
+    await schrijfJson(LLN_BESTAND,{leerlingen:nieuw,bijgewerkt:vandaag()});
+    leerlingen=nieuw;vulLlnStatus();initCoachTab();
+    toast('Leerlingenlijst opgeslagen');
+  }catch(e){alert('Opslaan mislukt: '+e.message);}
+}
+
+// ── INSTELLINGEN: classrooms kiezen ───────────────────────────────────────────
+async function laadClassroomLijst(){
+  if(!googleToken){koppelGoogle();return;}
+  const cont=$('klassen-lijst');cont.innerHTML='<p style="font-size:.85rem;color:#b6b9cf;padding:.4rem">⏳ Laden…</p>';
+  try{
+    const states=$('incl-archief').checked?'courseStates=ACTIVE&courseStates=ARCHIVED':'courseStates=ACTIVE';
+    const courses=await gFetchAll(`https://classroom.googleapis.com/v1/courses?teacherId=me&${states}`,'courses');
+    cfg.klassen=courses.map(c=>({id:c.id,naam:c.name+(c.courseState==='ARCHIVED'?' (archief)':'')}));
+    saveCfg();renderKlassenLijst();
+  }catch(e){cont.innerHTML='<p style="font-size:.85rem;color:var(--rood);padding:.4rem">⚠ '+esc(e.message)+'</p>';}
+}
+function renderKlassenLijst(){
+  const cont=$('klassen-lijst');
+  if(!cfg.klassen.length){cont.innerHTML='<p style="font-size:.85rem;color:#b6b9cf;padding:.4rem">Geen classrooms gevonden.</p>';return;}
+  cont.innerHTML=cfg.klassen.map(k=>
+    `<label><input type="checkbox" ${cfg.gekozen[k.id]?'checked':''} onchange="togKlas('${k.id}',this.checked)"><span>${esc(k.naam)}</span></label>`).join('');
+}
+function togKlas(id,aan){if(aan)cfg.gekozen[id]=true;else delete cfg.gekozen[id];saveCfg();initExpertTab();}
+function gekozenKlassen(){return cfg.klassen.filter(k=>cfg.gekozen[k.id]);}
+function laadInstellingen(){
+  renderKlassenLijst();vulLlnStatus();
+  if(cfg.folderId)$('map-input').value='https://drive.google.com/drive/folders/'+cfg.folderId;
+}
+function resetAlles(){
+  if(!confirm('Lokale instellingen wissen (mapkoppeling, klaskeuze)? De bestanden in Drive blijven staan.'))return;
+  localStorage.removeItem(KEY);location.reload();
+}
+
+// ── EXPERTSTATUSSEN samenvoegen (gelezen door beide weergaven) ────────────────
+// geeft per leerling per vak een lijst chips: {expert, kleur, notitie, datum}
+function statusVoor(email){
+  const perVak={};
+  Object.values(expertBestanden).forEach(eb=>{
+    const st=eb.statussen?.[email];if(!st)return;
+    Object.entries(st).forEach(([vak,s])=>{
+      if(!s?.kleur)return;
+      (perVak[vak]=perVak[vak]||[]).push({expert:eb.expert?.naam||'?',kleur:s.kleur,notitie:s.notitie||'',datum:s.datum||''});
+    });
+  });
+  return perVak;
+}
+function focusVoor(email){
+  const items=[];
+  Object.values(expertBestanden).forEach(eb=>(eb.focus||[]).forEach(f=>{
+    if(f.leerling===email)items.push({expert:eb.expert?.naam||'?',datum:f.datum,notitie:f.notitie});
+  }));
+  return items.sort((a,b)=>String(b.datum).localeCompare(String(a.datum)));
+}
+function contactenVoor(email){
+  const items=[];
+  Object.values(coachBestanden).forEach(cb=>(cb.oudercontacten||[]).forEach(c=>{
+    if(c.leerling===email)items.push({coach:cb.coach?.naam||'?',datum:c.datum,notitie:c.notitie||''});
+  }));
+  return items.sort((a,b)=>String(b.datum).localeCompare(String(a.datum)));
+}
+
+// ── EXPERTWEERGAVE ────────────────────────────────────────────────────────────
+let expRoster=null; // [{email,naam}]
+function initExpertTab(){
+  $('exp-vak').innerHTML=EXPERTISES.map(v=>`<option value="${v}">${v}</option>`).join('');
+  const klassen=gekozenKlassen();
+  $('exp-klas').innerHTML=klassen.length
+    ? '<option value="">— kies —</option>'+klassen.map(k=>`<option value="${k.id}">${esc(k.naam)}</option>`).join('')
+    : '<option value="">— kies eerst classrooms in Instellingen —</option>';
+}
+async function laadExpertLijst(){
+  const klasId=$('exp-klas').value, cont=$('exp-container');
+  if(!googleToken){cont.innerHTML=nietVerbonden();return;}
+  if(!cfg.folderId){cont.innerHTML='<div class="leeg">Koppel eerst de gedeelde map in Instellingen.</div>';return;}
+  if(!klasId){cont.innerHTML='<div class="leeg">Kies een classroom.</div>';return;}
+  cont.innerHTML='<div class="leeg">⏳ Leerlingen ophalen…</div>';
+  try{
+    const students=await gFetchAll(`https://classroom.googleapis.com/v1/courses/${klasId}/students`,'students');
+    expRoster=students.map(s=>({email:(s.profile.emailAddress||'').toLowerCase(),naam:s.profile.name.fullName}))
+      .sort((a,b)=>a.naam.localeCompare(b.naam));
+    renderExpertLijst();
+  }catch(e){cont.innerHTML=`<div class="leeg" style="color:var(--rood)">⚠ ${esc(e.message)}</div>`;}
+}
+function renderExpertLijst(){
+  if(!expRoster)return;
+  const vak=$('exp-vak').value, cont=$('exp-container');
+  const rijen=expRoster.map(s=>{
+    if(!s.email)return `<tr><td style="font-weight:600">${esc(s.naam)}</td><td colspan="3" style="color:var(--rood);font-size:.82rem">geen e-mailadres zichtbaar — kan niet opgevolgd worden</td></tr>`;
+    const st=mijnExpert.statussen?.[s.email]?.[vak]||{};
+    const contacten=contactenVoor(s.email);
+    const contactInfo=(st.kleur==='rood'&&contacten.length&&contacten[0].datum>=(st.datum||''))
+      ?`<div style="font-size:.78rem;color:var(--mos);margin-top:2px">📞 ouders gecontacteerd ${toonDatum(contacten[0].datum)} (${esc(contacten[0].coach)})</div>`:'';
+    const kb=k=>`<button class="kleur-btn ${k} ${st.kleur===k?'actief':''}" title="${k}" onclick="zetKleur('${escJs(s.email)}','${k}')"></button>`;
+    return `<tr>
+      <td style="font-weight:600;white-space:nowrap">${esc(s.naam)}${contactInfo}</td>
+      <td style="white-space:nowrap">${kb('groen')}${kb('oranje')}${kb('rood')}</td>
+      <td style="font-size:.78rem;color:var(--grijs);white-space:nowrap">${st.datum?toonDatum(st.datum):'—'}</td>
+      <td style="min-width:220px"><input class="notitie-input" value="${esc(st.notitie||'')}" placeholder="notitie voor de coach…" onchange="zetNotitie('${escJs(s.email)}',this.value)"></td>
+      <td><button class="btn xs outline" onclick="openFocus('${escJs(s.email)}','${escJs(s.naam)}')">🎯 focus</button></td>
+    </tr>`;
+  }).join('');
+  cont.innerHTML=`<div class="card" style="overflow-x:auto"><table>
+    <thead><tr><th>Leerling</th><th>Status (${esc(vak)})</th><th>Bijgewerkt</th><th>Notitie</th><th></th></tr></thead>
+    <tbody>${rijen}</tbody></table>
+    <div style="font-size:.78rem;color:#b6b9cf;margin-top:.6rem">Nogmaals klikken op de actieve kleur zet de status weer op "geen". Notities en kleuren worden automatisch opgeslagen in jouw expertbestand.</div>
+  </div>`;
+}
+function zorgStatus(email,vak){
+  mijnExpert.statussen[email]=mijnExpert.statussen[email]||{};
+  mijnExpert.statussen[email][vak]=mijnExpert.statussen[email][vak]||{};
+  return mijnExpert.statussen[email][vak];
+}
+let roodContext=null;
+function zetKleur(email,kleur){
+  const vak=$('exp-vak').value, st=zorgStatus(email,vak);
+  if(st.kleur===kleur){ // toggle uit
+    st.kleur=null;st.datum=vandaag();
+    mijnExpert.log.push({leerling:email,vak,kleur:null,datum:vandaag()});
+    bewaarMijnExpert();renderExpertLijst();return;
+  }
+  if(kleur==='rood'){
+    roodContext={email,vak};
+    const s=expRoster.find(r=>r.email===email);
+    $('rood-wie').textContent=(s?.naam||email)+' — '+vak;
+    $('rood-notitie').value=st.notitie||'';
+    $('modal-rood').classList.add('open');
+    setTimeout(()=>$('rood-notitie').focus(),50);
+    return;
+  }
+  st.kleur=kleur;st.datum=vandaag();
+  mijnExpert.log.push({leerling:email,vak,kleur,datum:vandaag()});
+  bewaarMijnExpert();renderExpertLijst();
+}
+function bevestigRood(){
+  const notitie=$('rood-notitie').value.trim();
+  if(!notitie){alert('Bij rood is een notitie verplicht.');return;}
+  const {email,vak}=roodContext, st=zorgStatus(email,vak);
+  st.kleur='rood';st.notitie=notitie;st.datum=vandaag();
+  mijnExpert.log.push({leerling:email,vak,kleur:'rood',datum:vandaag()});
+  bewaarMijnExpert();sluit('modal-rood');renderExpertLijst();
+  toast('Rood ingesteld — de coach ziet dit bij de volgende opening');
+}
+function zetNotitie(email,v){
+  const vak=$('exp-vak').value, st=zorgStatus(email,vak);
+  st.notitie=v.trim();st.datum=vandaag();
+  bewaarMijnExpert();
+}
+let focusContext=null;
+function openFocus(email,naam){
+  focusContext=email;
+  $('focus-wie').textContent=naam;
+  $('focus-datum').value=vandaag();
+  $('focus-notitie').value='';
+  $('modal-focus').classList.add('open');
+}
+function bevestigFocus(){
+  const notitie=$('focus-notitie').value.trim();
+  if(!notitie){alert('Schrijf kort wat er besproken is.');return;}
+  mijnExpert.focus.push({leerling:focusContext,datum:$('focus-datum').value||vandaag(),notitie});
+  bewaarMijnExpert();sluit('modal-focus');
+  toast('Focusgesprek geregistreerd');
+}
+
+// ── COACHWEERGAVE ─────────────────────────────────────────────────────────────
+function initCoachTab(){
+  const coaches=[...new Set(leerlingen.map(l=>l.coach))].sort();
+  const sel=$('coach-groep');
+  sel.innerHTML=coaches.length
+    ? '<option value="">— kies —</option>'+coaches.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('')
+    : '<option value="">— nog geen leerlingenlijst —</option>';
+  if(cfg.coachGroep&&coaches.includes(cfg.coachGroep))sel.value=cfg.coachGroep;
+  else if(coaches.length){ // probeer automatisch op basis van de voornaam van de ingelogde gebruiker
+    const naam=(mijnNaam||'').split(' ')[0].toLowerCase();
+    const match=coaches.find(c=>c.toLowerCase().includes(naam)&&naam.length>2);
+    if(match)sel.value=match;
+  }
+  wisselCoachgroep(true);
+}
+function coachLln(){return leerlingen.filter(l=>l.coach===$('coach-groep').value).sort((a,b)=>a.naam.localeCompare(b.naam));}
+function wisselCoachgroep(stil){
+  cfg.coachGroep=$('coach-groep').value;saveCfg();
+  const lln=coachLln();
+  $('coach-lln').innerHTML='<option value="">— kies leerling —</option>'+lln.map(l=>`<option value="${esc(l.email)}">${esc(l.naam)}</option>`).join('');
+  $('coach-detail').innerHTML='<div class="leeg">Kies een leerling om de opvolging te bekijken.</div>';
+  if(!stil&&!lln.length&&cfg.coachGroep)toast('Geen leerlingen gevonden voor deze coach');
+}
+
+// classrooms binnenhalen voor de hele coachgroep + snapshot bewaren
+async function vernieuwClassroom(){
+  if(!googleToken){$('coach-detail').innerHTML=nietVerbonden();return;}
+  const klassen=gekozenKlassen();
+  if(!klassen.length){alert('Kies eerst je classrooms in Instellingen.');return;}
+  const btn=$('btn-vernieuw');btn.disabled=true;$('coach-sync').textContent='⏳ Classroom ophalen…';
+  try{
+    const perLln={};
+    for(const k of klassen){
+      $('coach-sync').textContent='⏳ '+k.naam+'…';
+      const [taken,students,subs]=await Promise.all([
+        gFetchAll(`https://classroom.googleapis.com/v1/courses/${k.id}/courseWork`,'courseWork'),
+        gFetchAll(`https://classroom.googleapis.com/v1/courses/${k.id}/students`,'students'),
+        gFetchAll(`https://classroom.googleapis.com/v1/courses/${k.id}/courseWork/-/studentSubmissions`,'studentSubmissions')
+      ]);
+      const taakInfo={};taken.forEach(t=>{
+        let deadline=null;
+        if(t.dueDate)deadline=`${t.dueDate.year}-${String(t.dueDate.month).padStart(2,'0')}-${String(t.dueDate.day).padStart(2,'0')}`;
+        taakInfo[t.id]={titel:t.title,deadline};
+      });
+      const uidEmail={};students.forEach(s=>{uidEmail[s.userId]=(s.profile.emailAddress||'').toLowerCase();});
+      const nu=vandaag();
+      subs.forEach(sub=>{
+        const email=uidEmail[sub.userId];if(!email)return;
+        const t=taakInfo[sub.courseWorkId];if(!t)return; // bv. taak via een andere app aangemaakt → niet leesbaar
+        const p=perLln[email]=perLln[email]||{};
+        const c=p[k.id]=p[k.id]||{naam:k.naam,ontbrekend:[],ingediend:[],remediering:[],klaar:[],telaat:[]};
+        const label=t.titel+(t.deadline?` (${toonDatum(t.deadline)})`:'');
+        if(sub.state==='RETURNED'){
+          if(sub.assignedGrade!=null)c.klaar.push(label);else c.remediering.push(label);
+          if(sub.late)c.telaat.push(label);
+        }else if(sub.state==='TURNED_IN'){
+          c.ingediend.push(label);
+          if(sub.late)c.telaat.push(label);
+        }else{ // NEW / CREATED / RECLAIMED_BY_STUDENT
+          if(t.deadline&&t.deadline<nu)c.ontbrekend.push(label);
+        }
+      });
+    }
+    classroomCache={tijd:new Date().toLocaleString('nl-BE',{dateStyle:'short',timeStyle:'short'}),perLln};
+    // snapshot voor de trend (per dag; zelfde dag = overschrijven)
+    const snap={};
+    coachLln().forEach(l=>{
+      const p=perLln[l.email]||{};
+      let o=0,i=0,r=0,kl=0,tl=0;
+      Object.values(p).forEach(c=>{o+=c.ontbrekend.length;i+=c.ingediend.length;r+=c.remediering.length;kl+=c.klaar.length;tl+=c.telaat.length;});
+      snap[l.email]={o,i,r,k:kl,tl};
+    });
+    if(Object.keys(snap).length){mijnCoach.snapshots[vandaag()]=snap;bewaarMijnCoach();}
+    $('coach-sync').textContent='✓ vernieuwd '+classroomCache.tijd;
+    $('coach-sync').style.color='var(--mos)';
+    if($('coach-lln').value)toonLeerling();
+  }catch(e){
+    $('coach-sync').textContent='⚠ '+e.message;$('coach-sync').style.color='var(--rood)';
+  }finally{btn.disabled=false;}
+}
+
+function sparkline(email){
+  const datums=Object.keys(mijnCoach?.snapshots||{}).sort();
+  const punten=datums.map(d=>mijnCoach.snapshots[d][email]?.o).filter(v=>v!=null);
+  if(punten.length<2)return '';
+  const max=Math.max(...punten,1),W=120,H=28;
+  const xs=punten.map((v,i)=>`${(i/(punten.length-1)*W).toFixed(1)},${(H-3-(v/max)*(H-6)).toFixed(1)}`);
+  const laatste=punten[punten.length-1], eerste=punten[0];
+  const kleur=laatste>eerste?'var(--rood)':laatste<eerste?'var(--mos)':'var(--grijs)';
+  return `<span style="font-size:.75rem;color:var(--grijs);margin-left:.6rem">trend ontbrekend (${punten.length} metingen):</span>
+    <svg class="spark" width="${W}" height="${H}"><polyline points="${xs.join(' ')}" fill="none" stroke="${kleur}" stroke-width="2"/></svg>`;
+}
+
+function toonLeerling(){
+  const email=$('coach-lln').value, cont=$('coach-detail');
+  cont.innerHTML='';  // eerst leegmaken: geen gegevens van de vorige leerling in beeld
+  if(!email){cont.innerHTML='<div class="leeg">Kies een leerling om de opvolging te bekijken.</div>';return;}
+  const lln=leerlingen.find(l=>l.email===email);if(!lln)return;
+
+  // 1. Classroom-blok
+  let crHtml;
+  const data=classroomCache?.perLln?.[email];
+  if(!classroomCache)crHtml='<div class="leeg" style="padding:1rem">Nog geen Classroom-gegevens — klik <strong>🔄 Vernieuwen</strong> bovenaan.</div>';
+  else if(!data)crHtml='<div class="leeg" style="padding:1rem">Geen inzendingen gevonden voor deze leerling in de gekozen classrooms.</div>';
+  else{
+    let tO=0,tI=0,tR=0,tK=0,tT=0;
+    const blokken=Object.values(data).map(c=>{
+      tO+=c.ontbrekend.length;tI+=c.ingediend.length;tR+=c.remediering.length;tK+=c.klaar.length;tT+=c.telaat.length;
+      const cat=(emo,naam,items,badge)=>items.length?`<div class="cr-cat" onclick="this.classList.toggle('open')">
+          ${emo} <strong>${items.length}</strong> ${naam} <span style="color:#b6b9cf;font-size:.75rem">▾ klik voor taken</span>
+          <div class="taken">${items.map(esc).join('<br>')}</div></div>`:'';
+      return `<div class="cr-blok"><div style="font-weight:700;font-size:.9rem;margin-bottom:.3rem">${esc(c.naam)}
+          ${!c.ontbrekend.length&&!c.remediering.length?'<span class="badge b-groen" style="margin-left:.4rem">✓ in orde</span>':''}</div>
+        ${cat('❌','ontbrekend',c.ontbrekend)}${cat('📥','ingediend (nog na te kijken)',c.ingediend)}
+        ${cat('🔄','remediëring',c.remediering)}${cat('⏱','te laat ingeleverd',c.telaat)}
+        ${c.klaar.length?`<div class="cr-cat" onclick="this.classList.toggle('open')">🏁 <strong>${c.klaar.length}</strong> klaar <span style="color:#b6b9cf;font-size:.75rem">▾</span><div class="taken">${c.klaar.map(esc).join('<br>')}</div></div>`:''}
+      </div>`;
+    }).join('');
+    crHtml=`<div class="stats-row">
+        <div class="stat"><div class="stat-label">❌ Ontbrekend</div><div class="stat-value" style="color:${tO?'var(--rood)':'var(--blauw)'}">${tO}</div></div>
+        <div class="stat"><div class="stat-label">📥 Ingediend</div><div class="stat-value">${tI}</div></div>
+        <div class="stat"><div class="stat-label">🔄 Remediëring</div><div class="stat-value">${tR}</div></div>
+        <div class="stat"><div class="stat-label">🏁 Klaar</div><div class="stat-value">${tK}</div></div>
+        <div class="stat"><div class="stat-label">⏱ Te laat</div><div class="stat-value">${tT}</div></div>
+      </div>${blokken}
+      <details class="uitleg"><summary>Wat betekenen de categorieën?</summary>
+        ontbrekend = niet ingediend en deadline voorbij · ingediend = wacht op nazicht van de expert · remediëring = teruggegeven zonder score · klaar = teruggegeven mét score · te laat = ingeleverd na de deadline (telt ook mee in een andere categorie)
+      </details>`;
+  }
+
+  // 2. Expertblok (kleuren van alle experten)
+  const perVak=statusVoor(email);
+  const vakken=EXPERTISES.filter(v=>perVak[v]).concat(Object.keys(perVak).filter(v=>!EXPERTISES.includes(v)));
+  const expHtml=vakken.length?vakken.map(vak=>{
+    const chips=perVak[vak].map(c=>{
+      const oud=c.datum&&dagenGeleden(c.datum)>VERS_DAGEN;
+      return `<span class="chip ${oud?'oud':''}" title="${oud?'meer dan '+VERS_DAGEN+' dagen oud':''}">
+        <span class="bol ${c.kleur||'geen'}"></span>${esc(c.expert)} · ${c.datum?toonDatum(c.datum):'?'}${oud?' ⚠':''}</span>`;
+    }).join('');
+    const notities=perVak[vak].filter(c=>c.notitie).map(c=>`<div class="notitie"><strong>${esc(c.expert)}:</strong> ${esc(c.notitie)}</div>`).join('');
+    return `<div class="vak-blok"><div style="font-weight:700;font-size:.88rem;margin-bottom:.25rem">${esc(vak)}</div>${chips}${notities}</div>`;
+  }).join(''):'<div class="leeg" style="padding:1rem">Nog geen statussen van experten voor deze leerling.</div>';
+
+  // 3. Oudercontacten
+  const contacten=contactenVoor(email);
+  const heeftRood=vakken.some(v=>perVak[v].some(c=>c.kleur==='rood'));
+  const contactHtml=`
+    ${heeftRood?'<p style="font-size:.85rem;color:#c22;font-weight:600;margin-bottom:.5rem">🔴 Minstens één expert vraagt oudercontact.</p>':''}
+    ${contacten.length?contacten.map(c=>`<div class="list-item"><span style="font-size:.85rem;flex:1">📞 ${toonDatum(c.datum)} — ${esc(c.coach)}${c.notitie?': '+esc(c.notitie):''}</span></div>`).join(''):'<p style="font-size:.85rem;color:#b6b9cf">Nog geen oudercontacten geregistreerd.</p>'}
+    <button class="btn sm outline" style="margin-top:.6rem" onclick="openContact('${escJs(email)}','${escJs(lln.naam)}')">📞 Oudercontact registreren</button>`;
+
+  // 4. Focus
+  const focus=focusVoor(email);
+  const focusHtml=focus.length?focus.map(f=>`<div class="list-item"><span style="font-size:.85rem;flex:1">🎯 ${toonDatum(f.datum)} — bij ${esc(f.expert)}: ${esc(f.notitie)}</span></div>`).join('')
+    :'<p style="font-size:.85rem;color:#b6b9cf">Nog geen focusgesprekken geregistreerd.</p>';
+
+  cont.innerHTML=`
+    <div class="card"><div style="display:flex;align-items:baseline;gap:.6rem;flex-wrap:wrap">
+      <span style="font-weight:700;font-size:1.05rem;color:var(--blauw)">${esc(lln.naam)}</span>
+      <span class="badge b-grijs">${esc(String(lln.jaar))}e jaar</span>${sparkline(email)}
+    </div></div>
+    <div class="card"><h2>📡 Classroom ${classroomCache?`<span style="font-weight:400;font-size:.75rem;color:var(--grijs)">· ${classroomCache.tijd}</span>`:''}</h2>${crHtml}</div>
+    <div class="card"><h2>🎓 Experten</h2>${expHtml}</div>
+    <div class="card"><h2>📞 Oudercontact</h2>${contactHtml}</div>
+    <div class="card"><h2>🎯 Focus</h2>${focusHtml}</div>`;
+}
+
+let contactContext=null;
+function openContact(email,naam){
+  contactContext=email;
+  $('contact-wie').textContent=naam;
+  $('contact-datum').value=vandaag();
+  $('contact-notitie').value='';
+  $('modal-contact').classList.add('open');
+}
+function bevestigContact(){
+  mijnCoach.oudercontacten.push({leerling:contactContext,datum:$('contact-datum').value||vandaag(),notitie:$('contact-notitie').value.trim()});
+  bewaarMijnCoach();sluit('modal-contact');toonLeerling();
+  toast('Oudercontact geregistreerd');
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+if(localStorage.getItem('opv_google')==='1'){
+  zetVerbUI(true);
+  mijnNaam=localStorage.getItem('opv_google_naam');
+  mijnEmail=localStorage.getItem('opv_google_email');
+}
+initCoachTab();initExpertTab();laadInstellingen();
+
+</script>
+</body>
+</html>
