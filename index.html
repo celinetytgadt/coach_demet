@@ -95,7 +95,7 @@ details.uitleg summary{cursor:pointer;color:var(--grijs);font-weight:600;font-si
 
 <header>
   <span class="logo">De MET</span>
-  <h1>Opvolging <span class="v">v0.1</span></h1>
+  <h1>Opvolging <span class="v">v0.2</span></h1>
   <span id="hdr-status" style="margin-left:auto;font-size:.78rem;opacity:.75"></span>
 </header>
 
@@ -273,7 +273,7 @@ function showTab(naam,btn){
 // ── GOOGLE AUTH (zelfde patroon als klasbeheer) ───────────────────────────────
 const GKEY='732025887189-rml3flr631f1gmhhlkb63nbgqekqotsi.apps.googleusercontent.com';
 // bredere Drive-scope dan klasbeheer: we moeten bestanden van collega's in de gedeelde map kunnen lezen
-const GSCOPE='https://www.googleapis.com/auth/classroom.courses.readonly https://www.googleapis.com/auth/classroom.rosters.readonly https://www.googleapis.com/auth/classroom.coursework.students.readonly https://www.googleapis.com/auth/classroom.student-submissions.students.readonly https://www.googleapis.com/auth/drive';
+const GSCOPE='https://www.googleapis.com/auth/classroom.courses.readonly https://www.googleapis.com/auth/classroom.rosters.readonly https://www.googleapis.com/auth/classroom.profile.emails https://www.googleapis.com/auth/classroom.coursework.students.readonly https://www.googleapis.com/auth/classroom.student-submissions.students.readonly https://www.googleapis.com/auth/drive';
 let googleToken=null, mijnEmail=null, mijnNaam=null, googleBezig=false;
 let tokenClient=null, naToken=null;
 
